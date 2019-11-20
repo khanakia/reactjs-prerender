@@ -1,12 +1,24 @@
-## Prender Proxy - React Js App
+## React Server Side Rendering with Puppeteer if googlebot, yahoobot detected.
 React JS Client > Cloudflare > Proxy Server (Pupeeter) 
+
+This script is intend to render the react server side but using Pre-Rendering technique and it will prerender only if it detects the googlebot, yahoobot or bing.
+Before we used to have React SSR on server side but as our code grows the issues also started to grow which made me rethink to alternative strategy to render the APP server side as i needed the SSR only for SEO so google and other search engines can crawl my site and have good SEO ranking. So here's the solution.
+
+#### Required Skills
+* You know how to configure Nginx
+* You have knowledge how to host node.js app using NGINX
 
 #### Few points to remeber
 * Proxy will not work if you are trying to achieve this  (You want requests to go from the browser via **Cloudflare’s proxy** to your **Nginx proxy** and then on to your **internal server**.)
 * You need to disable the proxy cloud on cloudflare for your Proxy A Records for e.g. in my case it was A - prerender.lucian.com - 11.22.33.343 (Proxy Icon Disabled)
 
+####  Use Case
+* We have 2 servers SERVER A and SERVER B
+* SERVER A hosts the React JS app as plain HTML
+* SERVER B will be the proxy server
+
 ## STEPS
-* Create a prerender.lucian.com.conf in nginx > sites-avaiable
+* Create a NGINX conf file /etc/nginx/sites-available/prerender.lucian.com.conf 
 	```
 	server {
 	    listen 80;
@@ -24,9 +36,24 @@ React JS Client > Cloudflare > Proxy Server (Pupeeter)
 	```
 
 * Clone the node.js app and start node server.js
-So now your server will be listening on http://127.0.0.1:3001
+```
+git clone https://github.com/khanakia/reactjs-prerender.git
+cd reactjs-prerender
+yarn
+node server.js
+```
+Note: To debug you can use this command **env DEBUG="puppeteer:*" node script.js**
 
-* You can test the prerendering using http://prerender.lucian.com?url=https://www.google.com
+If you get **CHROME** related library missing etc. errors you can check these 2 links
+* https://blog.softhints.com/ubuntu-16-04-server-install-headless-google-chrome/
+https://github.com/GoogleChrome/puppeteer/issues/3443
+* https://blog.softhints.com/ubuntu-16-04-server-install-headless-google-chrome/
+https://github.com/GoogleChrome/puppeteer/issues/3443
+
+Note: You can use forever or pm2 to run your script as background process
+
+* So now your server will be listening on http://127.0.0.1:3001
+ You can test the prerendering using http://prerender.lucian.com?url=https://www.google.com
 
 * If everything works fine then login in to your React JS Server and modify the config file accordingly
 
